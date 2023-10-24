@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2023 | mahj0ng&#39;s blog</title>
+  <title>n1ctf crypto | mahj0ng&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="mahj0ng&#39;s blog">
-<meta property="og:url" content="http://example.com/archives/2023/index.html">
+  <meta name="description" content="e2W@rmup题目要求出签名算法的私钥 已知s,r,msg_hash和k的组成，k有hash的高位和私钥d的高位组成，所以可以将签名算法转化成一个关于d的二元方程组 12345678910def nonce_gen(msg, d):    msg_bin &#x3D; bin(msg)[2:].zfill(256)    d_bin &#x3D; bin(d)[2:].zfill(256)    nonce &#x3D; i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="n1ctf crypto">
+<meta property="og:url" content="http://example.com/2023/10/24/n1ctf-crypto/index.html">
 <meta property="og:site_name" content="mahj0ng&#39;s blog">
+<meta property="og:description" content="e2W@rmup题目要求出签名算法的私钥 已知s,r,msg_hash和k的组成，k有hash的高位和私钥d的高位组成，所以可以将签名算法转化成一个关于d的二元方程组 12345678910def nonce_gen(msg, d):    msg_bin &#x3D; bin(msg)[2:].zfill(256)    d_bin &#x3D; bin(d)[2:].zfill(256)    nonce &#x3D; i">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-10-24T11:10:45.000Z">
+<meta property="article:modified_time" content="2023-10-24T11:23:52.982Z">
 <meta property="article:author" content="Mahj0ng">
 <meta name="twitter:card" content="summary">
   
@@ -150,295 +154,166 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-n1ctf-crypto" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      n1ctf crypto
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/10/24/n1ctf-crypto/" class="archive-article-date">
+
+        
+        <a href="/2023/10/24/n1ctf-crypto/" class="archive-article-date">
   	<time datetime="2023-10-24T11:10:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-24</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/10/24/n1ctf-crypto/">n1ctf crypto</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="e2W-rmup"><a href="#e2W-rmup" class="headerlink" title="e2W@rmup"></a>e2W@rmup</h3><p>题目要求出签名算法的私钥</p>
+<p>已知s,r,msg_hash和k的组成，k有hash的高位和私钥d的高位组成，所以可以将签名算法转化成一个关于d的二元方程组</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">nonce_gen</span>(<span class="params">msg, d</span>):</span><br><span class="line">    msg_bin = <span class="built_in">bin</span>(msg)[<span class="number">2</span>:].zfill(<span class="number">256</span>)</span><br><span class="line">    d_bin = <span class="built_in">bin</span>(d)[<span class="number">2</span>:].zfill(<span class="number">256</span>)</span><br><span class="line">    nonce = <span class="built_in">int</span>(msg_bin[:<span class="number">128</span>] + d_bin[:<span class="number">128</span>], <span class="number">2</span>)</span><br><span class="line">    <span class="keyword">return</span> nonce</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sign</span>(<span class="params">msg, privkey, d</span>):</span><br><span class="line">    msg_hash = bytes_to_long(hashlib.sha256(msg).digest())</span><br><span class="line">    nonce = nonce_gen(msg_hash, d)</span><br><span class="line">    sig = privkey.sign(msg_hash, nonce)</span><br><span class="line">    s, r = sig.s, sig.r</span><br></pre></td></tr></table></figure>
+<script type="math/tex; mode=display">
+s*k\equiv msg+d*r</script><h4 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h4><p>可以考虑利用二元coppersmith来求解(比赛时没搞懂bound的取值)最后没成功解出来</p>
+<p>此处x,y代表私钥的低位和高位，以为是2^128和2^128结果居然是2^129,2^130，最后还得中间补0，下次多试试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">from Crypto.Cipher import AES</span><br><span class="line">from Crypto.Util.number import *</span><br><span class="line">p=0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551</span><br><span class="line">s = 98064531907276862129345013436610988187051831712632166876574510656675679745081</span><br><span class="line">r = 9821122129422509893435671316433203251343263825232865092134497361752993786340</span><br><span class="line">msg = b&#x27;welcome to n1ctf2023!&#x27;</span><br><span class="line">msg_hash = 61150888355238127656032056685485457592897647938586399320389134686214301721501</span><br><span class="line">leak = int(&quot;10000111001100100010110100100000000100101000111011000001001011010100001010010000101001100011011010100000010010011011100010111001&quot;, 2)</span><br><span class="line">R.&lt;x,y&gt;=Zmod(p)[]</span><br><span class="line">f=r*(y*(2^128)+x)+msg_hash-(leak&lt;&lt;128)*s-y*s</span><br><span class="line">x,y=small_roots(f,bounds=(2^129,2^130),m=3,d=4)[0]</span><br><span class="line">d = bin(y)[2:]+&#x27;0&#x27;+bin(x)[2:]</span><br><span class="line">d = int(d, 2)</span><br><span class="line">print(d.bit_length())</span><br><span class="line">print(x)</span><br><span class="line">print(y)</span><br><span class="line">aes = AES.new(long_to_bytes(d), mode=AES.MODE_ECB)</span><br><span class="line">cipher = b&#x27;\xf3#\xff\x17\xdf\xbb\xc0\xc6v\x1bg\xc7\x8a6\xf2\xdf~\x12\xd8]\xc5\x02Ot\x99\x9f\xf7\xf3\x98\xbc\x045\x08\xfb\xce1@e\xbcg[I\xd1\xbf\xf8\xea\n-&#x27;</span><br><span class="line">flag = aes.decrypt(cipher)</span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
+<h4 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h4><p>格求解，比赛的时候也考虑过这种算法，但是感觉数据太大了没解出来</p>
+<p>看了<a href="[N1CTF2023 Crypto-CSDN博客](https://blog.csdn.net/qq_41626232/article/details/133984214?spm=1001.2014.3001.5502">师傅</a>)的博客想到爆破几位来减小数据量（有点像das的那个背包了）</p>
+<p>懒得写了直接抄！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> ecdsa</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">curve = ecdsa.NIST256p.generator</span><br><span class="line">order = curve.order()</span><br><span class="line">a=ecdsa.NIST256p.curve.a()</span><br><span class="line">b=ecdsa.NIST256p.curve.b()</span><br><span class="line">p=ecdsa.NIST256p.curve.p()</span><br><span class="line">s = <span class="number">98064531907276862129345013436610988187051831712632166876574510656675679745081</span></span><br><span class="line">r = <span class="number">9821122129422509893435671316433203251343263825232865092134497361752993786340</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># d_bin = bin(d)[2:].zfill(256)</span></span><br><span class="line"><span class="comment"># x = int(d_bin[:128], 2)</span></span><br><span class="line"><span class="comment"># y = int(d_bin[128:], 2)</span></span><br><span class="line">msg = <span class="string">b&#x27;welcome to n1ctf2023!&#x27;</span></span><br><span class="line">msg_hash = bytes_to_long(hashlib.sha256(msg).digest())</span><br><span class="line">R = inverse_mod(r,order)</span><br><span class="line">msg_bin = <span class="built_in">bin</span>(msg_hash)[<span class="number">2</span>:].zfill(<span class="number">256</span>)</span><br><span class="line">M = <span class="built_in">int</span>(msg_bin[:<span class="number">128</span>], <span class="number">2</span>) &lt;&lt; <span class="number">128</span></span><br><span class="line">B=M*s*R-msg_hash*R</span><br><span class="line">A=s*R-<span class="number">2</span>^<span class="number">128</span></span><br><span class="line"></span><br><span class="line">p1=(<span class="number">0b11</span>&lt;&lt;<span class="number">126</span>)</span><br><span class="line">p2=(<span class="number">0b11</span>&lt;&lt;<span class="number">126</span>)</span><br><span class="line">B1=B+p1*A-p2</span><br><span class="line">L = Matrix(ZZ,[[order,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">               [A,<span class="number">1</span>,<span class="number">0</span>],</span><br><span class="line">               [B1,<span class="number">0</span>,<span class="number">2</span>^<span class="number">126</span>]])</span><br><span class="line">L=L.LLL()</span><br><span class="line">x1,y1=L[<span class="number">0</span>][<span class="number">1</span>],L[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line"><span class="comment">#d=((x1+p1)&lt;&lt;128)+p2+y1</span></span><br><span class="line">d=<span class="number">75767369414377063170504861698029562004628781620076152109208613361284011206099</span></span><br><span class="line">cipher = <span class="string">b&#x27;\xf3#\xff\x17\xdf\xbb\xc0\xc6v\x1bg\xc7\x8a6\xf2\xdf~\x12\xd8]\xc5\x02Ot\x99\x9f\xf7\xf3\x98\xbc\x045\x08\xfb\xce1@e\xbcg[I\xd1\xbf\xf8\xea\n-&#x27;</span></span><br><span class="line"></span><br><span class="line">aes = AES.new(long_to_bytes(d), mode=AES.MODE_ECB)</span><br><span class="line">m = aes.decrypt(cipher)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;m = <span class="subst">&#123;m&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>后续题目有时间再看……</p>
 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2023/10/24/n1ctf-crypto/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/09/19/2023%E8%93%9D%E5%B8%BD%E6%9D%AF%E5%8D%8A%E5%86%B3%E8%B5%9B%E5%AF%86%E7%A0%81%E5%AD%A6/" class="archive-article-date">
-  	<time datetime="2023-09-19T12:22:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-09-19</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/09/19/2023%E8%93%9D%E5%B8%BD%E6%9D%AF%E5%8D%8A%E5%86%B3%E8%B5%9B%E5%AF%86%E7%A0%81%E5%AD%A6/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">2023蓝帽杯半决赛密码学</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/09/19/2023%E8%93%9D%E5%B8%BD%E6%9D%AF%E5%8D%8A%E5%86%B3%E8%B5%9B%E5%AF%86%E7%A0%81%E5%AD%A6/">2023蓝帽杯半决赛密码学</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/09/04/2023%E7%BE%8A%E5%9F%8E%E6%9D%AF-pwn/" class="archive-article-date">
-  	<time datetime="2023-09-04T07:00:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-09-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/09/04/2023%E7%BE%8A%E5%9F%8E%E6%9D%AF-pwn/">2023羊城杯 pwn</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/09/03/2023%E7%BE%8A%E5%9F%8E%E6%9D%AF-crypto/" class="archive-article-date">
-  	<time datetime="2023-09-03T07:19:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-09-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/09/03/2023%E7%BE%8A%E5%9F%8E%E6%9D%AF-crypto/">2023羊城杯 crypto</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/30/%E7%AC%AC%E4%B8%83%E5%B1%8A%E8%93%9D%E5%B8%BD%E6%9D%AFcrypto%E5%A4%8D%E7%8E%B0/" class="archive-article-date">
-  	<time datetime="2023-08-30T01:49:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-30</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/30/%E7%AC%AC%E4%B8%83%E5%B1%8A%E8%93%9D%E5%B8%BD%E6%9D%AFcrypto%E5%A4%8D%E7%8E%B0/">第七届蓝帽杯crypto复现</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/29/nss2nd-wp/" class="archive-article-date">
-  	<time datetime="2023-08-29T02:26:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/29/nss2nd-wp/">nss2nd wp</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/25/wmctf2023-jit/" class="archive-article-date">
-  	<time datetime="2023-08-25T02:18:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/25/wmctf2023-jit/">wmctf2023 jit</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/24/house-of-blindless/" class="archive-article-date">
-  	<time datetime="2023-08-24T03:15:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-24</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/24/house-of-blindless/">house of blindless</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/21/WMCTF-2023/" class="archive-article-date">
-  	<time datetime="2023-08-21T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/21/WMCTF-2023/">WMCTF 2023</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/14/NepCTF2023-wp/" class="archive-article-date">
-  	<time datetime="2023-08-14T01:39:53.619Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/14/NepCTF2023-wp/">NepCTF2023</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2023/page/2/">2</a><a class="extend next" rel="next" href="/archives/2023/page/2/">Next &amp;raquo;</a>
-    </nav>
   
 
 
@@ -462,8 +337,8 @@
 	var yiliaConfig = {
 		mathjax: [object Object],
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
